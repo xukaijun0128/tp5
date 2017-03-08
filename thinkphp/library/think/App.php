@@ -69,7 +69,7 @@ class App
     public static function run(Request $request = null)
     {
         is_null($request) && $request = Request::instance();
-
+        
         try {
             $config = self::initCommon();
             if (defined('BIND_MODULE')) {
@@ -77,14 +77,20 @@ class App
                 BIND_MODULE && Route::bind(BIND_MODULE);
             } elseif ($config['auto_bind_module']) {
                 // 入口自动绑定
+                /*
+                 *    pathinfo() 函数以数组或字符串的形式返回关于文件路径的信息。
+                 *    返回的数组元素如下：
+                 *    [dirname]:返回文件路径中的目录部分
+                 *    [basename]:返回文件路径中文件名的部分
+                 *    [extension]:返回文件路径中文件的类型的部分
+                 */
                 $name = pathinfo($request->baseFile(), PATHINFO_FILENAME);
                 if ($name && 'index' != $name && is_dir(APP_PATH . $name)) {
                     Route::bind($name);
                 }
             }
-
+            
             $request->filter($config['default_filter']);
-
             if ($config['lang_switch_on']) {
                 // 开启多语言机制 检测当前语言
                 Lang::detect();
@@ -107,7 +113,6 @@ class App
             }
             // 记录当前调度信息
             $request->dispatch($dispatch);
-
             // 记录路由和请求信息
             if (self::$debug) {
                 Log::record('[ ROUTE ] ' . var_export($dispatch, true), 'info');
@@ -117,9 +122,8 @@ class App
 
             // 监听app_begin
             Hook::listen('app_begin', $dispatch);
+       
             // 请求缓存检查
-            $request->cache($config['request_cache'], $config['request_cache_expire'], $config['request_cache_except']);
-
             switch ($dispatch['type']) {
                 case 'redirect':
                     // 执行重定向跳转
@@ -155,7 +159,6 @@ class App
 
         // 清空类的实例化
         Loader::clearInstance();
-
         // 输出数据到客户端
         if ($data instanceof Response) {
             $response = $data;
@@ -385,7 +388,6 @@ class App
         }
 
         Hook::listen('action_begin', $call);
-
         return self::invokeMethod($call, $vars);
     }
 

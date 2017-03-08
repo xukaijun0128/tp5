@@ -249,6 +249,21 @@ class Loader
                 (array) $paths
             );
         }
+        /*
+         * self::$fallbackDirsPsr4
+         * self::$prefixLengthsPsr4
+         * [
+         *  't' => [
+         *      'think\' => 6
+         *  ]
+         * ]
+         * self::$prefixDirsPsr4
+         * [
+         *     'think\' => [
+         *         ' F:\wwwroot\think\thinkphp\library\think'
+         *     ]
+         * ]
+         */
     }
 
     // 注册命名空间别名
@@ -280,7 +295,6 @@ class Loader
         if (is_dir(VENDOR_PATH . 'composer')) {
             self::registerComposerLoader();
         }
-
         // 自动加载extend目录
         self::$fallbackDirsPsr4[] = rtrim(EXTEND_PATH, DS);
     }
