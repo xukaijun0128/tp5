@@ -9,6 +9,11 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+/*
+ * or 前者为false时,执行后者
+ * 在入口时定义框架常量,在mvc等各部分就可以直接调用.
+ *
+ */
 define('THINK_VERSION', '5.0.7');
 define('THINK_START_TIME', microtime(true));
 define('THINK_START_MEM', memory_get_usage());
@@ -31,6 +36,11 @@ defined('CONF_EXT') or define('CONF_EXT', EXT); // 配置文件后缀
 defined('ENV_PREFIX') or define('ENV_PREFIX', 'PHP_'); // 环境变量的配置前缀
 
 // 环境常量
+
+/*
+ * PHP_SAPI: php判断解析php服务是由那种服务器软件，是采用那种协议
+ * PHP_OS: 操作系统
+ */
 define('IS_CLI', PHP_SAPI == 'cli' ? true : false);
 define('IS_WIN', strpos(PHP_OS, 'WIN') !== false);
 
@@ -39,12 +49,24 @@ require CORE_PATH . 'Loader.php';
 
 // 加载环境变量配置文件
 if (is_file(ROOT_PATH . '.env')) {
+    /*
+     * parse_ini_file() 函数解析一个配置文件，并以数组的形式返回其中的设置。文件内容类似:
+     *  [names]
+        me = Robert
+        you = Peter
+        [urls]
+        first = "http://www.example.com"
+        second = "http://www.w3school.com.cn"
+     */
     $env = parse_ini_file(ROOT_PATH . '.env', true);
     foreach ($env as $key => $val) {
         $name = ENV_PREFIX . strtoupper($key);
         if (is_array($val)) {
             foreach ($val as $k => $v) {
                 $item = $name . '_' . strtoupper($k);
+                /*
+                 * putenv函数用来配置系统环境变量。
+                 */
                 putenv("$item=$v");
             }
         } else {
