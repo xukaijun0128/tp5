@@ -140,6 +140,31 @@ class Loader
     // 注册命名空间
     public static function addNamespace($namespace, $path = '')
     {
+        /*
+         * PSR原本有四个规范，分别是：
+         * PSR-0 自动加载
+         * PSR-1 基本代码规范
+         * PSR-2 代码样式
+         * PSR-3 日志接口
+         * 2013年底，新出了第5个规范——PSR-4。
+         * PSR-4规范了如何指定文件路径从而自动加载类定义，同时规范了自动加载文件的位置。这个乍一看和PSR-0重复了，实际上，在功能上确实有所重复。
+         * 区别在于PSR-4的规范比较干净，去除了兼容PHP 5.3以前版本的内容，有一点PSR-0升级版的感觉。
+         * 当然，PSR-4也不是要完全替代PSR-0，而是在必要的时候补充PSR-0——当然，如果你愿意，PSR-4也可以替代PSR-0。
+         * PSR-4可以和包括PSR-0在内的其他自动加载机制共同使用。
+         * PSR-4和PSR-0最大的区别是对下划线（underscore)的定义不同。PSR-4中，在类名中使用下划线没有任何特殊含义。
+         * 而PSR-0则规定类名中的下划线_会被转化成目录分隔符。
+         *
+         * rtrim:  rtrim(string, charlist) 函数移除字符串右侧的空白字符或其他预定义字符。
+         * string	必需。规定要检查的字符串。
+         * charlist	 可选。规定从字符串中删除哪些字符。如果省略，则移除下列所有字符：
+         * "\0" - NULL
+         * "\t" - 制表符
+         * "\n" - 换行
+         * "\x0B" - 垂直制表符
+         * "\r" - 回车
+         * " " - 空格
+         */
+        
         if (is_array($namespace)) {
             foreach ($namespace as $prefix => $paths) {
                 self::addPsr4($prefix . '\\', rtrim($paths, DS), true);
@@ -251,7 +276,6 @@ class Loader
         if (is_file(RUNTIME_PATH . 'classmap' . EXT)) {
             self::addClassMap(__include_file(RUNTIME_PATH . 'classmap' . EXT));
         }
-
         // Composer自动加载支持
         if (is_dir(VENDOR_PATH . 'composer')) {
             self::registerComposerLoader();
