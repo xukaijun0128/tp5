@@ -59,6 +59,7 @@ if (is_file(ROOT_PATH . '.env')) {
         second = "http://www.w3school.com.cn"
      */
     $env = parse_ini_file(ROOT_PATH . '.env', true);
+
     foreach ($env as $key => $val) {
         $name = ENV_PREFIX . strtoupper($key);
         if (is_array($val)) {
